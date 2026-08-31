@@ -8,8 +8,8 @@ import adafruit_tcs34725
 i2c = busio.I2C(board.SCL, board.SDA)
 sensor = adafruit_tcs34725.TCS34725(i2c)
 
-sensor.integration_time = 150
-sensor.gain = 60
+sensor.integration_time = 50
+sensor.gain = 4
 oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3C)
 
 while True:
