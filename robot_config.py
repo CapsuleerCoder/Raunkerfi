@@ -3,6 +3,8 @@ Robot Pinout & Wiring Configuration
 
 Format:
 VARIABLE_NAME = BCM_GPIO_INT  # [Pi Physical Pin] -Wire Color-> [Destination Header/Pin]
+
+Format gotten from chatGPT. Mine was ugly af and I had problems understanding it post writing. 
 """
 
 # ==========================================
@@ -23,10 +25,10 @@ PIN_SLP = 17                  # [Pi Pin 11] -Purple-> J12 SLP
 # ==========================================
 # Left Motor (MOTB / J6)
 # ==========================================
-PIN_MOTOR_LEFT_FWD = 19       # [Pi Pin 35] -Orange-> MOTB Pin 1 (BIN1)
-PIN_MOTOR_LEFT_BWD = 18       # [Pi Pin 12] -White->  MOTB Pin 2 (BIN2)
-PIN_ENC_LEFT_A = 20           # [Pi Pin 38] -Green->  MOTB Pin 3 (C1)
-PIN_ENC_LEFT_B = 21           # [Pi Pin 40] -Yellow-> MOTB Pin 4 (C2)
+PIN_MOTOR_LEFT_FWD = 18       # [Pi Pin 35] -Orange-> MOTB Pin 1 (BIN1)
+PIN_MOTOR_LEFT_BWD = 19       # [Pi Pin 12] -White->  MOTB Pin 2 (BIN2)
+PIN_ENC_LEFT_A = 21           # [Pi Pin 38] -Green->  MOTB Pin 3 (C1)
+PIN_ENC_LEFT_B = 20           # [Pi Pin 40] -Yellow-> MOTB Pin 4 (C2)
 
 # ==========================================
 # Right Motor (MOTA / J3)
