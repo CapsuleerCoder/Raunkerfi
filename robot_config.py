@@ -53,6 +53,18 @@ I2C_ADDR_COLOR = 0x29         # TCS34725 Color Sensor
 I2C_ADDR_OLED  = 0x3C         # SSD1306 Display
 I2C_ADDR_IMU   = 0x68         # ICM-20948 9-Axis IMU (AD0 left open/GND)
 
+==========================================
+# SPI Bus & MCP3008 ADC (Analog Distance)
+# ==========================================
+# Hardware SPI0 Pins:
+SPI_MOSI = 10                 # [Pi Pin 19] -> MCP3008 Pin 11 (DIN)
+SPI_MISO = 9                  # [Pi Pin 21] -> MCP3008 Pin 12 (DOUT)
+SPI_SCLK = 11                 # [Pi Pin 23] -> MCP3008 Pin 13 (CLK)
+SPI_CE0  = 8                  # [Pi Pin 24] -> MCP3008 Pin 10 (CS/SHDN)
+
+# MCP3008 Analog Channels:
+ADC_CH_IR_DISTANCE = 0        # MCP3008 Pin 1 (CH0) <- Yellow wire from Sharp IR sensor
+
 # ==========================================
 # Breadboard Layout Reference
 # ==========================================
@@ -60,20 +72,22 @@ I2C_ADDR_IMU   = 0x68         # ICM-20948 9-Axis IMU (AD0 left open/GND)
 #   - OLED VCC
 #   - TCS34725 3V3 (Purple wire)
 #   - ICM-20948 VCC (Red wire from 4-pin plug)
+#   - MCP3008 Pin 16 (VDD) & Pin 15 (VREF)
 #
 # Negative Rail (-): GND from Pi Pin 9
 #   - OLED GND
 #   - TCS34725 GND (Brown wire)
 #   - ICM-20948 GND (Black wire from 4-pin plug)
+#   - MCP3008 Pin 9 (DGND) & Pin 14 (AGND)
+#   - GP2Y0A21YK0F IR Ground (Black wire)
 #
 # Row 22 (SCL):
-#   - Pi Pin 5 (Green wire) [Col J]
-#   - OLED SCL              [Col J]
-#   - TCS34725 SCL (Grey)   [Col I]
-#   - ICM-20948 SCL (Yellow)[Col I]
+#   - Pi Pin 5 (Green) [Col J], OLED SCL, TCS SCL (Grey), ICM SCL (Yellow)
 #
 # Row 23 (SDA):
-#   - Pi Pin 3 (Blue wire)  [Col J]
-#   - OLED SDA              [Col J]
-#   - TCS34725 SDA (Blue)   [Col I]
-#   - ICM-20948 SDA (Blue)  [Col I]
+#   - Pi Pin 3 (Blue) [Col J], OLED SDA, TCS SDA (Blue), ICM SDA (Blue)
+#
+# Sharp GP2Y0A21YK0F Sensor:
+#   - Red:    5V Power (RovMotPow 5V / Pi Pin 4)
+#   - Black:  Negative Rail (-)
+#   - Yellow: MCP3008 Pin 1 (CH0)
