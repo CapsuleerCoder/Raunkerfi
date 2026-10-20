@@ -39,25 +39,41 @@ PIN_ENC_RIGHT_A = 5           # [Pi Pin 29] -Green->  MOTA Pin 3 (C1)
 PIN_ENC_RIGHT_B = 6           # [Pi Pin 31] -Yellow-> MOTA Pin 4 (C2)
 
 # ==========================================
-# I2C Bus & Sensors (SSD1306 OLED & TCS34725)
+# I2C Bus & Sensors
 # ==========================================
-# Shared Bus Pins:
-# [Pi Pin 3] (GPIO 2 - SDA) -Blue->  Breadboard Row 23 
-# [Pi Pin 5] (GPIO 3 - SCL) -Green-> Breadboard Row 22 
+# Shared Bus Pins on Pi:
+# [Pi Pin 3] (GPIO 2 - SDA) -Blue->  Breadboard Row 23 (Col J)
+# [Pi Pin 5] (GPIO 3 - SCL) -Green-> Breadboard Row 22 (Col J)
 
 I2C_SDA = 2                   # BCM GPIO 2
 I2C_SCL = 3                   # BCM GPIO 3
 
 # I2C Device Addresses
-I2C_ADDR_OLED = 0x3C          # SSD1306 Display
 I2C_ADDR_COLOR = 0x29         # TCS34725 Color Sensor
+I2C_ADDR_OLED  = 0x3C         # SSD1306 Display
+I2C_ADDR_IMU   = 0x68         # ICM-20948 9-Axis IMU (AD0 left open/GND)
 
 # ==========================================
 # Breadboard Layout Reference
 # ==========================================
 # Positive Rail (+): 3.3V from Pi Pin 17
+#   - OLED VCC
+#   - TCS34725 3V3 (Purple wire)
+#   - ICM-20948 VCC (Red wire from 4-pin plug)
+#
 # Negative Rail (-): GND from Pi Pin 9
-# Row 20: VCC (3.3V)
-# Row 21: GND
-# Row 22: SCL (Pi Pin 5 Green / TCS Grey / OLED SCL)
-# Row 23: SDA (Pi Pin 3 Blue  / TCS Blue / OLED SDA)
+#   - OLED GND
+#   - TCS34725 GND (Brown wire)
+#   - ICM-20948 GND (Black wire from 4-pin plug)
+#
+# Row 22 (SCL):
+#   - Pi Pin 5 (Green wire) [Col J]
+#   - OLED SCL              [Col J]
+#   - TCS34725 SCL (Grey)   [Col I]
+#   - ICM-20948 SCL (Yellow)[Col I]
+#
+# Row 23 (SDA):
+#   - Pi Pin 3 (Blue wire)  [Col J]
+#   - OLED SDA              [Col J]
+#   - TCS34725 SDA (Blue)   [Col I]
+#   - ICM-20948 SDA (Blue)  [Col I]
