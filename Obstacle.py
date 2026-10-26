@@ -16,8 +16,12 @@ adc_ir = MCP3008(channel=cfg.ADC_CH_IR_DISTANCE, device=0)
 FORWARD_SPEED = 1400.0
 SAMPLE_TIME = 0.05
 DISTANCE_THRESHOLD = 25.0
-
 TICKS_FOR_90_DEG = 190
+
+STALL_PWM_THRESHOLD = 0.35
+STALL_SPEED_THRESHOLD = 600.0
+STALL_TICKS_REQUIRED = 5
+REVERSE_TICKS = 150
 
 pid_left = PID(
     Kp=0.0003, Ki=0.0008, Kd=0.00001,
@@ -41,7 +45,7 @@ def get_distance():
 
 def turn_right_encoder_90():
     """Executes a 90-degree tank turn using encoder counts."""
-    print("\n[AVOID] Obstacle ahead! Executing 90° turn via encoders...")
+    print("\n[AVOID] Executing 90° turn via encoders...")
     left_motor.stop()
     right_motor.stop()
     time.sleep(0.15)
@@ -69,11 +73,42 @@ def turn_right_encoder_90():
     pid_right.reset()
     print("[AVOID] Turn complete. Resuming forward drive.\n")
 
+def reverse_backoff(ticks=REVERSE_TICKS):
+    """Backs away from an obstacle or contact surface using encoder distance."""
+    print(f"\n[STALL DETECTED] Backing up {ticks} ticks...")
+    left_motor.stop()
+    right_motor.stop()
+    time.sleep(0.1)
+
+    start_left = left_enc.steps
+    start_right = right_enc.steps
+
+    left_motor.backward(0.30)
+    right_motor.backward(0.30)
+
+    while True:
+        delta_left = abs(left_enc.steps - start_left)
+        delta_right = abs(right_enc.steps - start_right)
+        avg_ticks = (delta_left + delta_right) / 2.0
+
+        if avg_ticks >= ticks:
+            break
+        time.sleep(0.01)
+
+    left_motor.stop()
+    right_motor.stop()
+    time.sleep(0.15)
+
+    pid_left.reset()
+    pid_right.reset()
+    print("[RECOVERED] Clearance created.")
+
 last_left = left_enc.steps
 last_right = right_enc.steps
 last_time = time.time()
+stall_counter = 0
 
-print("Obstacle Avoidance Active (IR + PID + Encoders). Driving forward...")
+print("Obstacle Avoidance + Stall Protection Active. Driving forward...")
 
 try:
     while True:
@@ -84,12 +119,12 @@ try:
         last_time = now
 
         dist = get_distance()
-
         if dist <= DISTANCE_THRESHOLD:
             turn_right_encoder_90()
             last_left = left_enc.steps
             last_right = right_enc.steps
             last_time = time.time()
+            stall_counter = 0
             continue
 
         cur_left = left_enc.steps
@@ -104,13 +139,31 @@ try:
         pwm_left = pid_left(speed_left)
         pwm_right = pid_right(speed_right)
 
+        left_stalled = (pwm_left >= STALL_PWM_THRESHOLD) and (speed_left < STALL_SPEED_THRESHOLD)
+        right_stalled = (pwm_right >= STALL_PWM_THRESHOLD) and (speed_right < STALL_SPEED_THRESHOLD)
+
+        if left_stalled or right_stalled:
+            stall_counter += 1
+        else:
+            stall_counter = 0
+
+        if stall_counter >= STALL_TICKS_REQUIRED:
+            reverse_backoff(REVERSE_TICKS)
+            turn_right_encoder_90()
+            last_left = left_enc.steps
+            last_right = right_enc.steps
+            last_time = time.time()
+            stall_counter = 0
+            continue
+
         left_motor.forward(pwm_left)
         right_motor.forward(pwm_right)
 
         print(
             f"Dist: {dist:4.1f}cm | "
-            f"L: {speed_left:5.0f} (PWM {pwm_left:.2f}) | "
-            f"R: {speed_right:5.0f} (PWM {pwm_right:.2f})"
+            f"L: {speed_left:4.0f} ({pwm_left:.2f}) | "
+            f"R: {speed_right:4.0f} ({pwm_right:.2f}) | "
+            f"Stall Count: {stall_counter}"
         )
 
 except KeyboardInterrupt:
