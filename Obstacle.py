@@ -17,11 +17,11 @@ FORWARD_SPEED = 1400.0
 SAMPLE_TIME = 0.05
 DISTANCE_THRESHOLD = 25.0
 TICKS_FOR_90_DEG = 190
-
-STALL_PWM_THRESHOLD = 0.35
-STALL_SPEED_THRESHOLD = 600.0
-STALL_TICKS_REQUIRED = 5
 REVERSE_TICKS = 150
+
+LEFT_STALL_PWM = 0.35
+RIGHT_STALL_PWM = 0.35
+STALL_CYCLES_REQUIRED = 5
 
 pid_left = PID(
     Kp=0.0003, Ki=0.0008, Kd=0.00001,
@@ -45,7 +45,7 @@ def get_distance():
 
 def turn_right_encoder_90():
     """Executes a 90-degree tank turn using encoder counts."""
-    print("\n[AVOID] Executing 90° turn via encoders...")
+    print("\n[TURN] Executing 90° turn...")
     left_motor.stop()
     right_motor.stop()
     time.sleep(0.15)
@@ -71,11 +71,11 @@ def turn_right_encoder_90():
 
     pid_left.reset()
     pid_right.reset()
-    print("[AVOID] Turn complete. Resuming forward drive.\n")
+    print("[TURN] Done. Resuming forward drive.\n")
 
 def reverse_backoff(ticks=REVERSE_TICKS):
-    """Backs away from an obstacle or contact surface using encoder distance."""
-    print(f"\n[STALL DETECTED] Backing up {ticks} ticks...")
+    """Backs away from the wall using wheel rotations."""
+    print(f"\n[WALL DETECTED] High motor effort! Reversing {ticks} ticks...")
     left_motor.stop()
     right_motor.stop()
     time.sleep(0.1)
@@ -101,14 +101,14 @@ def reverse_backoff(ticks=REVERSE_TICKS):
 
     pid_left.reset()
     pid_right.reset()
-    print("[RECOVERED] Clearance created.")
+    print("[WALL CLEARED] Reversed cleanly.")
 
 last_left = left_enc.steps
 last_right = right_enc.steps
 last_time = time.time()
 stall_counter = 0
 
-print("Obstacle Avoidance + Stall Protection Active. Driving forward...")
+print("Obstacle Avoidance + Pure PWM Stall Detection Active...")
 
 try:
     while True:
@@ -139,15 +139,12 @@ try:
         pwm_left = pid_left(speed_left)
         pwm_right = pid_right(speed_right)
 
-        left_stalled = (pwm_left >= STALL_PWM_THRESHOLD) and (speed_left < STALL_SPEED_THRESHOLD)
-        right_stalled = (pwm_right >= STALL_PWM_THRESHOLD) and (speed_right < STALL_SPEED_THRESHOLD)
-
-        if left_stalled or right_stalled:
+        if (pwm_left >= LEFT_STALL_PWM) or (pwm_right >= RIGHT_STALL_PWM):
             stall_counter += 1
         else:
             stall_counter = 0
 
-        if stall_counter >= STALL_TICKS_REQUIRED:
+        if stall_counter >= STALL_CYCLES_REQUIRED:
             reverse_backoff(REVERSE_TICKS)
             turn_right_encoder_90()
             last_left = left_enc.steps
@@ -161,8 +158,8 @@ try:
 
         print(
             f"Dist: {dist:4.1f}cm | "
-            f"L: {speed_left:4.0f} ({pwm_left:.2f}) | "
-            f"R: {speed_right:4.0f} ({pwm_right:.2f}) | "
+            f"L_PWM: {pwm_left:.2f} (>{LEFT_STALL_PWM}) | "
+            f"R_PWM: {pwm_right:.2f} (>{RIGHT_STALL_PWM}) | "
             f"Stall Count: {stall_counter}"
         )
 
