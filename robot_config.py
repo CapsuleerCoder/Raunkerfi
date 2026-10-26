@@ -53,7 +53,7 @@ I2C_ADDR_COLOR = 0x29         # TCS34725 Color Sensor
 I2C_ADDR_OLED  = 0x3C         # SSD1306 Display
 I2C_ADDR_IMU   = 0x68         # ICM-20948 9-Axis IMU (AD0 left open/GND)
 
-==========================================
+#==========================================
 # SPI Bus & MCP3008 ADC (Analog Distance)
 # ==========================================
 # Hardware SPI0 Pins:
