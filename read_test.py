@@ -9,7 +9,6 @@ print("Reading SensoR")
 
 try:
     while True:
-        # adc.value returns a normalized float from 0.0 to 1.0
         raw = round(number.value * 1023)
         volts = number.value * V_REF
         
