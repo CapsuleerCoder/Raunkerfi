@@ -23,10 +23,10 @@ sensor.gain = 4
 
 #initialize the monster display and set it
 monster = Monster(i2c=i2c)
-Monster.set_mood("normal")
+monster.set_mood("normal")
 
 THRESHOLD = 4870.0
-TICKS_PER_TURN = 4  
+TICKS_PER_TURN = 20  
 STEP_PWM = 0.2
 DISTANCE_STOP_CM = 24.0
 
@@ -73,6 +73,9 @@ try:
             continue
 
         raw_clear = sensor.color_raw[3]
+        
+        step_left_wheel(TICKS_PER_TURN)
+        step_right_wheel(TICKS_PER_TURN)
 
         if raw_clear < THRESHOLD:
             monster.set_mood("laughing")
@@ -83,7 +86,7 @@ try:
             step_right_wheel(TICKS_PER_TURN)
             action = "ON FLOOR -> Step Left "
 
-        print(f"Clear reading: {raw_clear:5d} | {action} | IR: {dist:4.1f} cm", end="\r")
+        print(f" Clear reading: {raw_clear:5d} | {action} | IR: {dist:4.1f} cm", end="\r")
         time.sleep(0.02)
 
 except KeyboardInterrupt:
