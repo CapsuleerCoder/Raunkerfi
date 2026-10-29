@@ -61,7 +61,7 @@ def stop_all():
     right_motor.stop()
 
 
-input(print ("Put car down on on right side of tape, then press enter"))
+input("Put car down on on right side of tape, then press enter")
 try:
     while True:
         dist = get_front_distance()
@@ -74,15 +74,15 @@ try:
 
         raw_clear = sensor.color_raw[3]
         
-        step_left_wheel(TICKS_PER_TURN)
-        step_right_wheel(TICKS_PER_TURN)
-
         if raw_clear < THRESHOLD:
             monster.set_mood("laughing")
             step_left_wheel(TICKS_PER_TURN)
             action = "ON TAPE  -> Step Right"
         else:
-            monster.set_mood("normal")
+            if raw_clear > 7000:
+                monster.set_mood("scared")
+            else:
+                monster.set_mood("grin")
             step_right_wheel(TICKS_PER_TURN)
             action = "ON FLOOR -> Step Left "
 
@@ -93,4 +93,4 @@ except KeyboardInterrupt:
     stop_all()
     slp.off()
     monster.clear()
-    print("\nProgram stopped.")
+    print("\n Rover stopped.")
