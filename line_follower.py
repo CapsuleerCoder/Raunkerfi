@@ -74,12 +74,7 @@ try:
 
         raw_clear = sensor.color_raw[3]
         
-        if raw_clear < 6999:
-            monster.set_mood("laughing")
-            step_left_wheel(TICKS_PER_TURN)
-            step_right_wheel(TICKS_PER_TURN)
-            action = "along tape > Stepping forward"
-        elif raw_clear < THRESHOLD:
+        if  raw_clear < THRESHOLD:
             monster.set_mood("laughing")
             step_left_wheel(TICKS_PER_TURN)
             action = "ON TAPE  -> Stepping Right"
