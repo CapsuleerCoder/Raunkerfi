@@ -68,7 +68,7 @@ try:
         if dist <= DISTANCE_STOP_CM:
             stop_all()
             monster.set_mood("scared")
-            print(f"[OBSTACLE] Distance -{dist} cm (Blocked)     ", end="\r")
+            print(f"[OBSTACLE] Distance -{dist:4.1f} cm (Blocked)     ", end="\r")
             time.sleep(0.05)
             continue
 
@@ -86,7 +86,7 @@ try:
             step_right_wheel(TICKS_PER_TURN)
             action = "ON FLOOR -> Step Left "
 
-        print(f" Clear reading: {raw_clear:5d} | {action} | IR: {dist} cm", end="\r")
+        print(f" Clear reading: {raw_clear:5d} | {action} | IR: {dist:4.1f} cm", end="\r")
         time.sleep(0.02)
 
 except KeyboardInterrupt:
