@@ -26,7 +26,7 @@ monster = Monster(i2c=i2c)
 monster.set_mood("normal")
 
 THRESHOLD = 4870.0
-TICKS_PER_TURN = 20  
+TICKS_PER_TURN = 40  
 STEP_PWM = 0.2
 DISTANCE_STOP_CM = 24.0
 
@@ -68,7 +68,7 @@ try:
         if dist <= DISTANCE_STOP_CM:
             stop_all()
             monster.set_mood("scared")
-            print(f"[OBSTACLE] Distance -{dist:4.1f} cm (Blocked)     ", end="\r")
+            print(f"[OBSTACLE] Distance -{dist} cm (Blocked)     ", end="\r")
             time.sleep(0.05)
             continue
 
@@ -86,7 +86,7 @@ try:
             step_right_wheel(TICKS_PER_TURN)
             action = "ON FLOOR -> Step Left "
 
-        print(f" Clear reading: {raw_clear:5d} | {action} | IR: {dist:4.1f} cm", end="\r")
+        print(f" Clear reading: {raw_clear:5d} | {action} | IR: {dist} cm", end="\r")
         time.sleep(0.02)
 
 except KeyboardInterrupt:
