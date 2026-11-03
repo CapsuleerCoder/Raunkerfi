@@ -61,7 +61,7 @@ def stop_all():
     right_motor.stop()
 
 
-input("Put car down on on right side of tape, then press enter")
+input("place car down on on right side of tape, then press enter")
 try:
     while True:
         dist = get_front_distance()
@@ -74,10 +74,15 @@ try:
 
         raw_clear = sensor.color_raw[3]
         
-        if raw_clear < THRESHOLD:
+        if raw_clear < 6999:
             monster.set_mood("laughing")
             step_left_wheel(TICKS_PER_TURN)
-            action = "ON TAPE  -> Step Right"
+            step_right_wheel(TICKS_PER_TURN)
+            action = "along tape > Stepping forward"
+        elif raw_clear < THRESHOLD:
+            monster.set_mood("laughing")
+            step_left_wheel(TICKS_PER_TURN)
+            action = "ON TAPE  -> Stepping Right"
         else:
             if raw_clear > 7000:
                 monster.set_mood("scared")
